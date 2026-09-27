@@ -1,0 +1,2547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Math Gachapon</title>
+
+<style>
+:root {
+    --bg: #f5f7fb;
+    --panel: #ffffff;
+    --text: #202536;
+    --muted: #747b8f;
+    --primary: #6957e8;
+    --primary-dark: #5142c7;
+    --green: #25b878;
+    --red: #ef6262;
+    --yellow: #ffc94d;
+    --blue: #4e9cf5;
+    --border: #e6e8f0;
+    --shadow: 0 12px 35px rgba(44, 48, 72, .10);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+    background:
+        radial-gradient(
+            circle at 10% 0%,
+            rgba(105,87,232,.10),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 95% 10%,
+            rgba(255,201,77,.13),
+            transparent 25%
+        ),
+        var(--bg);
+
+    color: var(--text);
+}
+
+button,
+input {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+.app {
+    width: 100%;
+    max-width: 1050px;
+    margin: auto;
+    padding: 18px;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 18px;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 15px;
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--primary),
+            #8f7cff
+        );
+
+    color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 25px;
+
+    box-shadow:
+        0 8px 22px rgba(105,87,232,.25);
+}
+
+.title h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.title p {
+    margin: 3px 0 0;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.timer {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    border-radius: 15px;
+    padding: 10px 15px;
+    text-align: center;
+    min-width: 100px;
+}
+
+.timer-label {
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+#timer {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--primary);
+}
+
+.timer.warning #timer {
+    color: var(--red);
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    50% {
+        opacity: .45;
+    }
+}
+
+
+/* =========================
+   TOP STATS
+========================= */
+
+.stats {
+    display: grid;
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.stat {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 13px;
+    box-shadow: var(--shadow);
+}
+
+.stat-label {
+    color: var(--muted);
+    font-size: 11px;
+}
+
+.stat-value {
+    font-size: 22px;
+    font-weight: 800;
+    margin-top: 3px;
+}
+
+
+/* =========================
+   PROGRESS
+========================= */
+
+.progress-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: var(--shadow);
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.progress-title {
+    font-weight: 700;
+}
+
+.progress-text {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.progress-bar {
+    height: 11px;
+    background: #ececf4;
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background:
+        linear-gradient(
+            90deg,
+            var(--primary),
+            #9b8cff
+        );
+
+    border-radius: 99px;
+    transition: width .3s ease;
+}
+
+
+/* =========================
+   MAIN GAME
+========================= */
+
+.game-layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 15px;
+}
+
+@media(max-width: 800px) {
+    .game-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.game-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow: var(--shadow);
+    min-height: 420px;
+}
+
+.question-number {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 12px;
+}
+
+.question {
+    min-height: 125px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    font-size:
+        clamp(42px, 8vw, 72px);
+
+    font-weight: 900;
+    letter-spacing: 2px;
+
+    color: #25293a;
+}
+
+.answer-area {
+    max-width: 430px;
+    margin: auto;
+}
+
+.answer-input {
+    width: 100%;
+    height: 65px;
+
+    border:
+        3px solid #e1e3ec;
+
+    border-radius: 17px;
+
+    text-align: center;
+
+    font-size: 28px;
+    font-weight: 800;
+
+    outline: none;
+
+    transition: .2s;
+}
+
+.answer-input:focus {
+    border-color: var(--primary);
+    box-shadow:
+        0 0 0 4px rgba(105,87,232,.10);
+}
+
+.answer-input.correct {
+    border-color: var(--green);
+    background: #f0fff8;
+}
+
+.answer-input.wrong {
+    border-color: var(--red);
+    background: #fff4f4;
+}
+
+.feedback {
+    min-height: 28px;
+    text-align: center;
+    margin-top: 10px;
+    font-weight: 700;
+}
+
+.feedback.correct {
+    color: var(--green);
+}
+
+.feedback.wrong {
+    color: var(--red);
+}
+
+.controls {
+    display: flex;
+    gap: 9px;
+    margin-top: 20px;
+}
+
+.btn {
+    border: 0;
+    border-radius: 14px;
+    min-height: 48px;
+    padding: 11px 18px;
+    font-weight: 700;
+    transition: .15s;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+    flex: 1;
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+}
+
+.btn-light {
+    background: #f1f2f7;
+    color: #454b60;
+}
+
+.btn:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+    transform: none;
+}
+
+
+/* =========================
+   GACHAPON SIDE
+========================= */
+
+.gacha-panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+    padding: 20px;
+    text-align: center;
+}
+
+.gacha-panel h2 {
+    margin: 0 0 4px;
+    font-size: 20px;
+}
+
+.gacha-panel p {
+    margin: 0 0 15px;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.gacha-machine {
+    position: relative;
+    margin: 10px auto 15px;
+    width: 190px;
+}
+
+.machine-top {
+    height: 50px;
+    width: 145px;
+    margin: auto;
+    border-radius: 70px 70px 18px 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7060eb,
+            #9a8aff
+        );
+
+    position: relative;
+}
+
+.machine-glass {
+    height: 160px;
+    width: 165px;
+    margin: -5px auto 0;
+
+    border-radius:
+        35px 35px 20px 20px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #f7f8ff,
+            #e6e8f7
+        );
+
+    border:
+        7px solid #6254d7;
+
+    position: relative;
+    overflow: hidden;
+}
+
+.capsule {
+    position: absolute;
+
+    width: 38px;
+    height: 38px;
+
+    border-radius: 50%;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ff7398 0 48%,
+            #ffffff 49% 52%,
+            #6d62e8 53%
+        );
+
+    box-shadow:
+        0 4px 8px rgba(0,0,0,.15);
+}
+
+.c1 {
+    left: 18px;
+    bottom: 22px;
+}
+
+.c2 {
+    right: 18px;
+    bottom: 30px;
+}
+
+.c3 {
+    left: 63px;
+    bottom: 18px;
+}
+
+.c4 {
+    left: 40px;
+    bottom: 72px;
+}
+
+.c5 {
+    right: 35px;
+    bottom: 78px;
+}
+
+.machine-base {
+    height: 53px;
+    width: 190px;
+    margin: -3px auto 0;
+
+    background:
+        linear-gradient(
+            135deg,
+            #5a4dd0,
+            #7465eb
+        );
+
+    border-radius: 12px 12px 25px 25px;
+
+    position: relative;
+}
+
+.machine-knob {
+    position: absolute;
+
+    width: 42px;
+    height: 42px;
+
+    border-radius: 50%;
+
+    background: var(--yellow);
+
+    left: 50%;
+    top: 5px;
+
+    transform: translateX(-50%);
+
+    border: 5px solid #f0b733;
+}
+
+.spin-btn {
+    width: 100%;
+    background:
+        linear-gradient(
+            135deg,
+            #ffbd39,
+            #ff9f27
+        );
+
+    color: #382300;
+
+    font-size: 16px;
+}
+
+.spin-btn.locked {
+    background: #ececf3;
+    color: #999eaf;
+}
+
+.spin-count {
+    margin-top: 9px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+
+/* =========================
+   PRIZE DISPLAY
+========================= */
+
+.prize-display {
+    display: none;
+    margin-top: 15px;
+    padding: 16px;
+
+    border-radius: 18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fff7e5,
+            #f5efff
+        );
+
+    border: 1px solid #eee0bf;
+
+    animation:
+        prizePop .45s ease;
+}
+
+.prize-display.show {
+    display: block;
+}
+
+@keyframes prizePop {
+    0% {
+        transform: scale(.75) rotate(-3deg);
+        opacity: 0;
+    }
+
+    70% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.prize-type {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 800;
+}
+
+.prize-icon {
+    font-size: 58px;
+    margin: 8px 0;
+}
+
+.prize-name {
+    font-size: 18px;
+    font-weight: 900;
+}
+
+
+/* =========================
+   SESSION END
+========================= */
+
+.overlay {
+    position: fixed;
+    inset: 0;
+
+    background:
+        rgba(22,25,40,.70);
+
+    backdrop-filter: blur(7px);
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    z-index: 100;
+}
+
+.overlay.show {
+    display: flex;
+}
+
+.end-card {
+    width: 100%;
+    max-width: 450px;
+
+    background: white;
+
+    border-radius: 25px;
+
+    padding: 30px;
+
+    text-align: center;
+
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.3);
+}
+
+.trophy {
+    font-size: 65px;
+}
+
+.end-card h2 {
+    margin: 5px 0;
+}
+
+.final-score {
+    font-size: 42px;
+    font-weight: 900;
+    color: var(--primary);
+    margin: 10px;
+}
+
+.final-stats {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 8px;
+    margin: 20px 0;
+}
+
+.final-stat {
+    padding: 12px;
+    background: #f5f5fa;
+    border-radius: 13px;
+}
+
+.final-stat strong {
+    display: block;
+    font-size: 21px;
+}
+
+
+/* =========================
+   TOAST
+========================= */
+
+.toast {
+    position: fixed;
+
+    left: 50%;
+    bottom: 25px;
+
+    transform:
+        translateX(-50%)
+        translateY(100px);
+
+    background: #272b3b;
+    color: white;
+
+    padding: 12px 18px;
+
+    border-radius: 14px;
+
+    font-weight: 700;
+
+    opacity: 0;
+
+    transition: .3s;
+
+    z-index: 200;
+}
+
+.toast.show {
+    transform:
+        translateX(-50%)
+        translateY(0);
+
+    opacity: 1;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:520px) {
+
+    .app {
+        padding: 12px;
+    }
+
+    .header {
+        align-items: flex-start;
+    }
+
+    .private {
+        display: none;
+    }
+
+    .game-card {
+        padding: 20px;
+    }
+
+    .question {
+        font-size: 45px;
+    }
+
+    .controls {
+        flex-wrap: wrap;
+    }
+
+    .controls .btn {
+        min-width: 100px;
+    }
+}
+</style>
+</head>
+
+
+<body>
+
+<div class="app">
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <div class="logo-area">
+
+            <div class="logo">
+                🧮
+            </div>
+
+            <div class="title">
+                <h1>Math Gachapon</h1>
+                <p>Think fast. Answer correctly. Win toys!</p>
+            </div>
+
+        </div>
+
+
+        <div class="timer" id="timerBox">
+
+            <div class="timer-label">
+                Time Left
+            </div>
+
+            <div id="timer">
+                5:00
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- STATS -->
+
+    <div class="stats">
+
+        <div class="stat">
+            <div class="stat-label">
+                Score
+            </div>
+
+            <div class="stat-value" id="score">
+                0
+            </div>
+        </div>
+
+
+        <div class="stat">
+            <div class="stat-label">
+                Correct
+            </div>
+
+            <div class="stat-value" id="correct">
+                0
+            </div>
+        </div>
+
+
+        <div class="stat">
+            <div class="stat-label">
+                Questions
+            </div>
+
+            <div class="stat-value" id="attempts">
+                0
+            </div>
+        </div>
+
+
+        <div class="stat">
+            <div class="stat-label">
+                Toys Won
+            </div>
+
+            <div class="stat-value" id="toys">
+                0
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- GACHA PROGRESS -->
+
+    <div class="progress-card">
+
+        <div class="progress-header">
+
+            <div class="progress-title">
+                🎁 Next Gachapon Spin
+            </div>
+
+            <div class="progress-text" id="progressText">
+                0 / 5
+            </div>
+
+        </div>
+
+        <div class="progress-bar">
+
+            <div
+                class="progress-fill"
+                id="progressFill"
+            ></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- MAIN -->
+
+    <div class="game-layout">
+
+
+        <!-- QUESTION -->
+
+        <main class="game-card">
+
+            <div
+                class="question-number"
+                id="questionNumber"
+            >
+                Question 1
+            </div>
+
+
+            <div
+                class="question"
+                id="question"
+            >
+                24 + 13 = ?
+            </div>
+
+
+            <div class="answer-area">
+
+                <input
+                    id="answerInput"
+                    class="answer-input"
+                    type="number"
+                    inputmode="numeric"
+                    autocomplete="off"
+                    placeholder="Type your answer"
+                    aria-label="Your answer"
+                >
+
+
+                <div
+                    id="feedback"
+                    class="feedback"
+                    aria-live="polite"
+                ></div>
+
+
+                <div class="controls">
+
+                    <button
+                        class="btn btn-light"
+                        id="backBtn"
+                        type="button"
+                    >
+                        ← Back
+                    </button>
+
+
+                    <button
+                        class="btn btn-primary"
+                        id="submitBtn"
+                        type="button"
+                    >
+                        Check Answer
+                    </button>
+
+
+                    <button
+                        class="btn btn-light"
+                        id="nextBtn"
+                        type="button"
+                    >
+                        Next →
+                    </button>
+
+                </div>
+
+            </div>
+
+        </main>
+
+
+        <!-- GACHAPON -->
+
+        <aside class="gacha-panel">
+
+            <h2>🎁 Gachapon Machine</h2>
+
+            <p>
+                Get 5 correct answers to earn a spin!
+            </p>
+
+
+            <div class="gacha-machine">
+
+                <div class="machine-top"></div>
+
+                <div class="machine-glass">
+
+                    <div class="capsule c1"></div>
+                    <div class="capsule c2"></div>
+                    <div class="capsule c3"></div>
+                    <div class="capsule c4"></div>
+                    <div class="capsule c5"></div>
+
+                </div>
+
+                <div class="machine-base">
+
+                    <div class="machine-knob"></div>
+
+                </div>
+
+            </div>
+
+
+            <button
+                id="spinBtn"
+                class="btn spin-btn locked"
+                type="button"
+                disabled
+            >
+                🔒 Earn a Spin
+            </button>
+
+
+            <div
+                class="spin-count"
+                id="spinCount"
+            >
+                0 spins available
+            </div>
+
+
+            <div
+                class="prize-display"
+                id="prizeDisplay"
+            >
+
+                <div
+                    class="prize-type"
+                    id="prizeType"
+                >
+                </div>
+
+                <div
+                    class="prize-icon"
+                    id="prizeIcon"
+                >
+                </div>
+
+                <div
+                    class="prize-name"
+                    id="prizeName"
+                >
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+</div>
+
+
+<!-- SESSION END -->
+
+<div
+    class="overlay"
+    id="endOverlay"
+>
+
+    <div class="end-card">
+
+        <div class="trophy">
+            🏆
+        </div>
+
+        <h2>Time's Up!</h2>
+
+        <p>
+            Great work! Here's your session result.
+        </p>
+
+        <div class="final-score">
+            <span id="finalScore">
+                0
+            </span>
+            points
+        </div>
+
+
+        <div class="final-stats">
+
+            <div class="final-stat">
+                <strong id="finalCorrect">0</strong>
+                Correct
+            </div>
+
+            <div class="final-stat">
+                <strong id="finalAttempts">0</strong>
+                Questions
+            </div>
+
+            <div class="final-stat">
+                <strong id="finalAccuracy">0%</strong>
+                Accuracy
+            </div>
+
+            <div class="final-stat">
+                <strong id="finalToys">0</strong>
+                Toys
+            </div>
+
+        </div>
+
+
+        <button
+            class="btn btn-primary"
+            id="restartBtn"
+            type="button"
+            style="width:100%"
+        >
+            🔄 Play Again
+        </button>
+
+    </div>
+
+</div>
+
+
+<div
+    class="toast"
+    id="toast"
+>
+</div>
+
+
+<script>
+
+/* =====================================================
+   MATH GACHAPON
+===================================================== */
+
+
+/* -----------------------------
+   GAME STATE
+----------------------------- */
+
+const GAME_TIME = 5 * 60;
+
+let timeLeft = GAME_TIME;
+
+let timerInterval = null;
+
+let gameOver = false;
+
+let score = 0;
+
+let correctCount = 0;
+
+let attempts = 0;
+
+let correctSinceSpin = 0;
+
+let spinsAvailable = 0;
+
+let toysWon = 0;
+
+let currentIndex = 0;
+
+let questions = [];
+
+
+/* -----------------------------
+   ELEMENTS
+----------------------------- */
+
+const timerElement =
+    document.getElementById("timer");
+
+const timerBox =
+    document.getElementById("timerBox");
+
+const scoreElement =
+    document.getElementById("score");
+
+const correctElement =
+    document.getElementById("correct");
+
+const attemptsElement =
+    document.getElementById("attempts");
+
+const toysElement =
+    document.getElementById("toys");
+
+const questionNumber =
+    document.getElementById("questionNumber");
+
+const questionElement =
+    document.getElementById("question");
+
+const answerInput =
+    document.getElementById("answerInput");
+
+const feedback =
+    document.getElementById("feedback");
+
+const backBtn =
+    document.getElementById("backBtn");
+
+const nextBtn =
+    document.getElementById("nextBtn");
+
+const submitBtn =
+    document.getElementById("submitBtn");
+
+const progressText =
+    document.getElementById("progressText");
+
+const progressFill =
+    document.getElementById("progressFill");
+
+const spinBtn =
+    document.getElementById("spinBtn");
+
+const spinCount =
+    document.getElementById("spinCount");
+
+const prizeDisplay =
+    document.getElementById("prizeDisplay");
+
+const prizeType =
+    document.getElementById("prizeType");
+
+const prizeIcon =
+    document.getElementById("prizeIcon");
+
+const prizeName =
+    document.getElementById("prizeName");
+
+const toast =
+    document.getElementById("toast");
+
+
+/* =====================================================
+   SOUND
+===================================================== */
+
+let audioContext = null;
+
+
+function getAudioContext() {
+
+    if (!audioContext) {
+
+        audioContext =
+            new (
+                window.AudioContext ||
+                window.webkitAudioContext
+            )();
+
+    }
+
+    if (audioContext.state === "suspended") {
+        audioContext.resume();
+    }
+
+    return audioContext;
+}
+
+
+function playTone(
+    frequency,
+    duration,
+    type = "sine",
+    volume = 0.08
+) {
+
+    try {
+
+        const ctx = getAudioContext();
+
+        const oscillator =
+            ctx.createOscillator();
+
+        const gain =
+            ctx.createGain();
+
+        oscillator.type = type;
+
+        oscillator.frequency.value =
+            frequency;
+
+        gain.gain.setValueAtTime(
+            volume,
+            ctx.currentTime
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+            0.001,
+            ctx.currentTime + duration
+        );
+
+        oscillator.connect(gain);
+        gain.connect(ctx.destination);
+
+        oscillator.start();
+
+        oscillator.stop(
+            ctx.currentTime + duration
+        );
+
+    } catch (error) {
+
+        // Sound is optional.
+    }
+}
+
+
+function correctSound() {
+
+    playTone(660, .10, "sine", .07);
+
+    setTimeout(() => {
+        playTone(880, .14, "sine", .08);
+    }, 90);
+
+}
+
+
+function wrongSound() {
+
+    playTone(180, .16, "triangle", .05);
+
+}
+
+
+function prizeSound() {
+
+    const notes = [
+        523,
+        659,
+        784,
+        1047
+    ];
+
+    notes.forEach(
+        (note, index) => {
+
+            setTimeout(
+                () => {
+                    playTone(
+                        note,
+                        .16,
+                        "sine",
+                        .09
+                    );
+                },
+                index * 100
+            );
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   QUESTION GENERATOR
+===================================================== */
+
+
+function randomInt(min, max) {
+
+    return Math.floor(
+        Math.random() * (max - min + 1)
+    ) + min;
+
+}
+
+
+function makeQuestion() {
+
+    const type =
+        Math.floor(Math.random() * 3);
+
+
+    /* ADDITION */
+
+    if (type === 0) {
+
+        const a =
+            randomInt(10, 99);
+
+        const b =
+            randomInt(10, 99);
+
+        return {
+
+            text: `${a} + ${b} = ?`,
+
+            answer: a + b,
+
+            type: "addition"
+
+        };
+
+    }
+
+
+    /* SUBTRACTION */
+
+    if (type === 1) {
+
+        let a =
+            randomInt(10, 99);
+
+        let b =
+            randomInt(10, 99);
+
+        /*
+          Keep answers positive.
+        */
+
+        if (b > a) {
+            [a, b] = [b, a];
+        }
+
+        return {
+
+            text: `${a} − ${b} = ?`,
+
+            answer: a - b,
+
+            type: "subtraction"
+
+        };
+
+    }
+
+
+    /* MULTIPLICATION */
+
+    const multiplier =
+        randomInt(2, 5);
+
+    const number =
+        randomInt(1, 12);
+
+    return {
+
+        text: `${number} × ${multiplier} = ?`,
+
+        answer: number * multiplier,
+
+        type: "multiplication"
+
+    };
+
+}
+
+
+/* =====================================================
+   QUESTIONS
+===================================================== */
+
+
+function addQuestion() {
+
+    questions.push({
+        ...makeQuestion(),
+        answered: false,
+        correct: false,
+        userAnswer: ""
+    });
+
+}
+
+
+function getCurrentQuestion() {
+
+    return questions[currentIndex];
+
+}
+
+
+function ensureQuestion(index) {
+
+    while (questions.length <= index) {
+        addQuestion();
+    }
+
+}
+
+
+/* =====================================================
+   DISPLAY QUESTION
+===================================================== */
+
+
+function renderQuestion() {
+
+    ensureQuestion(currentIndex);
+
+    const q =
+        getCurrentQuestion();
+
+
+    questionNumber.textContent =
+        `Question ${currentIndex + 1}`;
+
+
+    questionElement.textContent =
+        q.text;
+
+
+    answerInput.value =
+        q.userAnswer || "";
+
+
+    answerInput.classList.remove(
+        "correct",
+        "wrong"
+    );
+
+
+    feedback.textContent = "";
+
+    feedback.className =
+        "feedback";
+
+
+    if (q.answered) {
+
+        if (q.correct) {
+
+            feedback.textContent =
+                "✓ Correct! Great job!";
+
+            feedback.classList.add(
+                "correct"
+            );
+
+            answerInput.classList.add(
+                "correct"
+            );
+
+        } else {
+
+            feedback.textContent =
+                `✗ Not quite. The answer is ${q.answer}.`;
+
+            feedback.classList.add(
+                "wrong"
+            );
+
+            answerInput.classList.add(
+                "wrong"
+            );
+
+        }
+
+    }
+
+
+    backBtn.disabled =
+        currentIndex === 0;
+
+
+    nextBtn.disabled =
+        currentIndex >= questions.length - 1 &&
+        !q.answered;
+
+
+    submitBtn.disabled =
+        q.answered ||
+        gameOver;
+
+
+    if (!q.answered && !gameOver) {
+
+        setTimeout(() => {
+
+            answerInput.focus();
+
+        }, 50);
+
+    }
+
+}
+
+
+/* =====================================================
+   SUBMIT ANSWER
+===================================================== */
+
+
+function submitAnswer() {
+
+    if (gameOver) {
+        return;
+    }
+
+
+    const q =
+        getCurrentQuestion();
+
+
+    if (q.answered) {
+        return;
+    }
+
+
+    const raw =
+        answerInput.value.trim();
+
+
+    if (raw === "") {
+
+        showToast(
+            "Type an answer first!"
+        );
+
+        answerInput.focus();
+
+        return;
+    }
+
+
+    const userAnswer =
+        Number(raw);
+
+
+    if (!Number.isFinite(userAnswer)) {
+
+        showToast(
+            "Please enter a number."
+        );
+
+        return;
+    }
+
+
+    q.userAnswer =
+        userAnswer;
+
+
+    q.answered =
+        true;
+
+
+    attempts++;
+
+
+    if (userAnswer === q.answer) {
+
+        q.correct =
+            true;
+
+        correctCount++;
+
+        correctSinceSpin++;
+
+        score += 10;
+
+        correctSound();
+
+
+        feedback.textContent =
+            "✓ Correct! +10 points!";
+
+        feedback.className =
+            "feedback correct";
+
+        answerInput.classList.add(
+            "correct"
+        );
+
+
+        /*
+          Every 5 correct answers:
+          earn one spin.
+        */
+
+        if (correctSinceSpin >= 5) {
+
+            correctSinceSpin -= 5;
+
+            spinsAvailable++;
+
+            unlockSpin();
+
+            showToast(
+                "🎁 You earned a Gachapon spin!"
+            );
+
+        }
+
+    } else {
+
+        q.correct =
+            false;
+
+        wrongSound();
+
+
+        feedback.textContent =
+            `✗ Not quite. The answer is ${q.answer}.`;
+
+        feedback.className =
+            "feedback wrong";
+
+        answerInput.classList.add(
+            "wrong"
+        );
+
+    }
+
+
+    updateStats();
+
+    updateProgress();
+
+
+    submitBtn.disabled =
+        true;
+
+
+    nextBtn.disabled =
+        false;
+
+}
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+
+backBtn.addEventListener(
+    "click",
+    () => {
+
+        if (currentIndex > 0) {
+
+            currentIndex--;
+
+            renderQuestion();
+
+        }
+
+    }
+);
+
+
+nextBtn.addEventListener(
+    "click",
+    () => {
+
+        if (gameOver) {
+            return;
+        }
+
+
+        const q =
+            getCurrentQuestion();
+
+
+        /*
+          Student must answer current
+          question before moving forward.
+        */
+
+        if (!q.answered) {
+
+            showToast(
+                "Answer this question first!"
+            );
+
+            return;
+
+        }
+
+
+        currentIndex++;
+
+        ensureQuestion(currentIndex);
+
+        renderQuestion();
+
+    }
+);
+
+
+submitBtn.addEventListener(
+    "click",
+    submitAnswer
+);
+
+
+answerInput.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key === "Enter"
+        ) {
+
+            event.preventDefault();
+
+            submitAnswer();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   STATS
+===================================================== */
+
+
+function updateStats() {
+
+    scoreElement.textContent =
+        score;
+
+    correctElement.textContent =
+        correctCount;
+
+    attemptsElement.textContent =
+        attempts;
+
+    toysElement.textContent =
+        toysWon;
+
+}
+
+
+function updateProgress() {
+
+    const progress =
+        Math.min(
+            correctSinceSpin,
+            5
+        );
+
+
+    progressText.textContent =
+        `${progress} / 5`;
+
+
+    progressFill.style.width =
+        `${progress * 20}%`;
+
+}
+
+
+/* =====================================================
+   GACHAPON
+===================================================== */
+
+
+const prizes = {
+
+    small: [
+
+        {
+            icon: "🧸",
+            name: "Mini Teddy"
+        },
+
+        {
+            icon: "🐸",
+            name: "Tiny Frog Toy"
+        },
+
+        {
+            icon: "🐱",
+            name: "Mini Cat"
+        },
+
+        {
+            icon: "🐼",
+            name: "Mini Panda"
+        },
+
+        {
+            icon: "🐰",
+            name: "Mini Bunny"
+        },
+
+        {
+            icon: "🦆",
+            name: "Duck Toy"
+        }
+
+    ],
+
+
+    medium: [
+
+        {
+            icon: "🚗",
+            name: "Mini Racing Car"
+        },
+
+        {
+            icon: "🤖",
+            name: "Robot Toy"
+        },
+
+        {
+            icon: "🦖",
+            name: "Dinosaur Figure"
+        },
+
+        {
+            icon: "🚀",
+            name: "Space Rocket"
+        },
+
+        {
+            icon: "🐲",
+            name: "Dragon Figure"
+        }
+
+    ],
+
+
+    big: [
+
+        {
+            icon: "🧸",
+            name: "Big Plush Bear"
+        },
+
+        {
+            icon: "🚙",
+            name: "Large RC Car"
+        },
+
+        {
+            icon: "🤖",
+            name: "Deluxe Robot"
+        },
+
+        {
+            icon: "🏎️",
+            name: "Super Racing Car"
+        },
+
+        {
+            icon: "🐉",
+            name: "Giant Dragon"
+        }
+
+    ]
+
+};
+
+
+function unlockSpin() {
+
+    spinBtn.disabled =
+        false;
+
+    spinBtn.classList.remove(
+        "locked"
+    );
+
+    spinBtn.textContent =
+        "🎁 SPIN THE GACHAPON!";
+
+
+    updateSpinCount();
+
+}
+
+
+function updateSpinCount() {
+
+    if (spinsAvailable > 0) {
+
+        spinCount.textContent =
+            `${spinsAvailable} spin${spinsAvailable === 1 ? "" : "s"} available`;
+
+    } else {
+
+        spinCount.textContent =
+            "0 spins available";
+
+        spinBtn.disabled =
+            true;
+
+        spinBtn.classList.add(
+            "locked"
+        );
+
+        spinBtn.textContent =
+            "🔒 Earn a Spin";
+
+    }
+
+}
+
+
+/* =====================================================
+   SPIN
+===================================================== */
+
+
+spinBtn.addEventListener(
+    "click",
+    spinGachapon
+);
+
+
+function spinGachapon() {
+
+    if (
+        spinsAvailable <= 0 ||
+        gameOver
+    ) {
+        return;
+    }
+
+
+    spinsAvailable--;
+
+
+    updateSpinCount();
+
+
+    /*
+      Hide previous prize.
+    */
+
+    prizeDisplay.classList.remove(
+        "show"
+    );
+
+
+    /*
+      Animate machine.
+    */
+
+    const machine =
+        document.querySelector(
+            ".gacha-machine"
+        );
+
+
+    machine.animate(
+        [
+            {
+                transform:
+                    "rotate(0deg)"
+            },
+            {
+                transform:
+                    "rotate(-4deg)"
+            },
+            {
+                transform:
+                    "rotate(4deg)"
+            },
+            {
+                transform:
+                    "rotate(-3deg)"
+            },
+            {
+                transform:
+                    "rotate(0deg)"
+            }
+        ],
+        {
+            duration: 700,
+            iterations: 2
+        }
+    );
+
+
+    setTimeout(
+        () => {
+
+            const prize =
+                choosePrize();
+
+
+            showPrize(prize);
+
+            prizeSound();
+
+            toysWon++;
+
+            updateStats();
+
+        },
+        1450
+    );
+
+}
+
+
+/* =====================================================
+   PRIZE RANDOMIZER
+===================================================== */
+
+
+function choosePrize() {
+
+    const roll =
+        Math.random();
+
+
+    /*
+      Approximate probability:
+      Small = 60%
+      Medium = 30%
+      Big = 10%
+    */
+
+    let tier;
+
+
+    if (roll < .60) {
+
+        tier = "small";
+
+    } else if (roll < .90) {
+
+        tier = "medium";
+
+    } else {
+
+        tier = "big";
+
+    }
+
+
+    const list =
+        prizes[tier];
+
+
+    const item =
+        list[
+            Math.floor(
+                Math.random() * list.length
+            )
+        ];
+
+
+    return {
+        tier,
+        ...item
+    };
+
+}
+
+
+function showPrize(prize) {
+
+    const tierNames = {
+
+        small:
+            "🟢 SMALL PRIZE",
+
+        medium:
+            "🔵 MEDIUM PRIZE",
+
+        big:
+            "🟣 BIG PRIZE"
+
+    };
+
+
+    prizeType.textContent =
+        tierNames[prize.tier];
+
+
+    prizeIcon.textContent =
+        prize.icon;
+
+
+    prizeName.textContent =
+        prize.name;
+
+
+    prizeDisplay.classList.remove(
+        "show"
+    );
+
+
+    /*
+      Force animation restart.
+    */
+
+    void prizeDisplay.offsetWidth;
+
+
+    prizeDisplay.classList.add(
+        "show"
+    );
+
+}
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+
+let toastTimer = null;
+
+
+function showToast(message) {
+
+    toast.textContent =
+        message;
+
+    toast.classList.add(
+        "show"
+    );
+
+
+    clearTimeout(toastTimer);
+
+
+    toastTimer =
+        setTimeout(
+            () => {
+
+                toast.classList.remove(
+                    "show"
+                );
+
+            },
+            2200
+        );
+
+}
+
+
+/* =====================================================
+   TIMER
+===================================================== */
+
+
+function formatTime(seconds) {
+
+    const minutes =
+        Math.floor(
+            seconds / 60
+        );
+
+    const secs =
+        seconds % 60;
+
+
+    return (
+        String(minutes).padStart(2, "0")
+        +
+        ":"
+        +
+        String(secs).padStart(2, "0")
+    );
+
+}
+
+
+function updateTimer() {
+
+    timerElement.textContent =
+        formatTime(timeLeft);
+
+
+    if (timeLeft <= 30) {
+
+        timerBox.classList.add(
+            "warning"
+        );
+
+    }
+
+
+    if (timeLeft <= 0) {
+
+        endGame();
+
+    }
+
+}
+
+
+function startTimer() {
+
+    clearInterval(
+        timerInterval
+    );
+
+
+    timerInterval =
+        setInterval(
+            () => {
+
+                if (gameOver) {
+                    return;
+                }
+
+
+                timeLeft--;
+
+                updateTimer();
+
+
+            },
+            1000
+        );
+
+}
+
+
+/* =====================================================
+   END GAME
+===================================================== */
+
+
+function endGame() {
+
+    if (gameOver) {
+        return;
+    }
+
+
+    gameOver =
+        true;
+
+
+    clearInterval(
+        timerInterval
+    );
+
+
+    answerInput.disabled =
+        true;
+
+    submitBtn.disabled =
+        true;
+
+    nextBtn.disabled =
+        true;
+
+    backBtn.disabled =
+        true;
+
+    spinBtn.disabled =
+        true;
+
+
+    document.getElementById(
+        "finalScore"
+    ).textContent =
+        score;
+
+
+    document.getElementById(
+        "finalCorrect"
+    ).textContent =
+        correctCount;
+
+
+    document.getElementById(
+        "finalAttempts"
+    ).textContent =
+        attempts;
+
+
+    const accuracy =
+        attempts === 0
+            ? 0
+            : Math.round(
+                correctCount /
+                attempts *
+                100
+            );
+
+
+    document.getElementById(
+        "finalAccuracy"
+    ).textContent =
+        `${accuracy}%`;
+
+
+    document.getElementById(
+        "finalToys"
+    ).textContent =
+        toysWon;
+
+
+    document.getElementById(
+        "endOverlay"
+    ).classList.add(
+        "show"
+    );
+
+
+    playTone(
+        523,
+        .18,
+        "sine",
+        .08
+    );
+
+}
+
+
+/* =====================================================
+   RESTART
+===================================================== */
+
+
+document.getElementById(
+    "restartBtn"
+).addEventListener(
+    "click",
+    restartGame
+);
+
+
+function restartGame() {
+
+    timeLeft =
+        GAME_TIME;
+
+    gameOver =
+        false;
+
+    score =
+        0;
+
+    correctCount =
+        0;
+
+    attempts =
+        0;
+
+    correctSinceSpin =
+        0;
+
+    spinsAvailable =
+        0;
+
+    toysWon =
+        0;
+
+    currentIndex =
+        0;
+
+    questions =
+        [];
+
+
+    addQuestion();
+
+
+    document.getElementById(
+        "endOverlay"
+    ).classList.remove(
+        "show"
+    );
+
+
+    answerInput.disabled =
+        false;
+
+
+    prizeDisplay.classList.remove(
+        "show"
+    );
+
+
+    timerBox.classList.remove(
+        "warning"
+    );
+
+
+    updateStats();
+
+    updateProgress();
+
+    updateSpinCount();
+
+    updateTimer();
+
+    renderQuestion();
+
+    startTimer();
+
+}
+
+
+/* =====================================================
+   START GAME
+===================================================== */
+
+addQuestion();
+
+updateStats();
+
+updateProgress();
+
+updateSpinCount();
+
+updateTimer();
+
+renderQuestion();
+
+startTimer();
+
+
+/*
+  On the first interaction, initialize
+  the audio system. This makes sounds
+  work reliably on phones/tablets.
+*/
+
+document.addEventListener(
+    "pointerdown",
+    () => {
+
+        try {
+            getAudioContext();
+        } catch (error) {}
+
+    },
+    {
+        once: true
+    }
+);
+
+</script>
+
+</body>
+</html>
